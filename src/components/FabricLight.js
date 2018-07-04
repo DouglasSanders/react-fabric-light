@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { fabric } from 'fabric';
 
-export default class FabricLight extends Component {
+import MenuBar from './MenuBar';
+import { computeScale } from '../util';
+
+export default class FabricLight extends PureComponent {
   constructor(props) {
     super(props);
     let id;
@@ -10,7 +13,10 @@ export default class FabricLight extends Component {
       id = `react-fabric-light-${new Date().getTime()}`;
     } while (document.getElementById(id));
     this.state = {
-      id: id
+      id: id,
+      canvas: null,
+      sourceImage: null,
+      transforms: []
     };
 
     this.canvas_wrapper = React.createRef();
@@ -22,7 +28,7 @@ export default class FabricLight extends Component {
    *
    * @returns {undefined}
    */
-  requireValidProps(props) {
+  static requireValidProps(props) {
     React.Children.only(props.children);
     if (
       props.children.type !== 'img' ||
@@ -35,11 +41,16 @@ export default class FabricLight extends Component {
   }
 
   initializeImage(img_src) {
-    const img = fabric.Image.fromURL(
+    fabric.Image.fromURL(
       img_src,
       o_img => {
-        this.canvas.add(o_img);
-        this.canvas.renderAll();
+        const { canvas } = this.state;
+        canvas.add(o_img);
+        ::this.rescaleImage(canvas, o_img);
+        this.setState({
+          canvas: canvas,
+          sourceImage: o_img
+        });
       },
       {
         // Some options to make the image static
@@ -55,42 +66,47 @@ export default class FabricLight extends Component {
         hasBorders: false
       }
     );
-
-    this.setState({
-      ...this.state,
-      sourceImage: img
-    });
   }
 
-  componentWillMount() {
-    ::this.requireValidProps(this.props);
+  rescaleImage(canvas, image) {
+    if (canvas && image) {
+      image.scale(computeScale(canvas, image));
+      canvas.centerObject(image);
+      image.setCoords();
+      canvas.requestRenderAll();
+    }
   }
 
   componentDidMount() {
+    FabricLight.requireValidProps(this.props);
     const { id } = this.state;
-    const { children } = this.props;
-    this.canvas = new fabric.Canvas(id);
-    ::this.initializeImage(children.props.src);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // Update the background image if our child img updates
-    ::this.requireValidProps(nextProps);
-    if (this.props.children.props.src !== nextProps.children.props.src)
-      ::this.initializeImage(nextProps.children.props.src);
+    const { children, backgroundColor } = this.props;
+    this.setState(
+      {
+        canvas: new fabric.Canvas(id, {
+          selection: false,
+          backgroundColor: backgroundColor
+        })
+      },
+      () => {
+        ::this.initializeImage(children.props.src);
+      }
+    );
   }
 
   render() {
     const { width, height } = this.props;
-    const { id } = this.state;
+    const { id, canvas, sourceImage } = this.state;
+    const readyForAction = !!canvas && !!sourceImage;
     return (
-      <div>
+      <div style={{ position: 'relative' }}>
         <canvas
           id={id}
           ref={this.canvas_element}
           width={width}
           height={height}
         />
+        {readyForAction && <MenuBar canvas={canvas} image={sourceImage} />}
       </div>
     );
   }
@@ -99,10 +115,12 @@ export default class FabricLight extends Component {
 FabricLight.propTypes = {
   children: PropTypes.element.isRequired,
   width: PropTypes.number,
-  height: PropTypes.number
+  height: PropTypes.number,
+  backgroundColor: PropTypes.string
 };
 
 FabricLight.defaultProps = {
   width: 500,
-  height: 500
+  height: 500,
+  backgroundColor: 'rgba(0, 0, 0, 0.1)'
 };

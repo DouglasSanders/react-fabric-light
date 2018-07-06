@@ -1,26 +1,26 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { fabric } from 'fabric';
 
 import MenuBar from './MenuBar';
 import { computeScale } from '../util';
 
-export default class FabricLight extends PureComponent {
+export class FabricLight extends Component {
   constructor(props) {
     super(props);
     let id;
     do {
       id = `react-fabric-light-${new Date().getTime()}`;
     } while (document.getElementById(id));
+
+    //be sure to update shapes.js with changes
     this.state = {
       id: id,
       canvas: null,
       sourceImage: null,
-      transforms: []
+      transforms: [],
+      redos: []
     };
-
-    this.canvas_wrapper = React.createRef();
-    this.canvas_element = React.createRef();
   }
 
   /**
@@ -68,11 +68,56 @@ export default class FabricLight extends PureComponent {
     );
   }
 
+  /**
+   * Adds a new Transform to the stack. Wipes out any existing Redo stack.
+   */
+  addTransform(transformFunction) {
+    this.setState(prevState => ({
+      transforms: prevState.transforms.concat([transformFunction]),
+      redos: []
+    }));
+  }
+
+  /**
+   * Undo the last Transform in the stack, and push it onto the Redo stack.
+   */
+  undoTransform() {
+    this.setState(prevState => {
+      if (prevState.transforms.length > 0) {
+        return {
+          transforms: prevState.transforms.slice(0, -1),
+          redos: prevState.redos.concat([prevState.transforms.slice(-1)])
+        };
+      } else return prevState;
+    });
+  }
+
+  /**
+   * Add the uppermost Transform in the Redo stack back onto the Transform stack.
+   * Removes the Transform from the Redo stack.
+   */
+  redoTransform() {
+    this.setState(prevState => {
+      if (prevState.redos.length > 0) {
+        return {
+          transforms: prevState.transforms.concat([prevState.redos.slice(-1)]),
+          redos: prevState.redos.slice(0, -1)
+        };
+      } else return prevState;
+    });
+  }
+
   rescaleImage(canvas, image) {
     if (canvas && image) {
       image.scale(computeScale(canvas, image));
       canvas.centerObject(image);
       image.setCoords();
+    }
+  }
+
+  renderImage(canvas, image) {
+    if (canvas && image) {
+      ::this.rescaleImage(canvas, image);
       canvas.requestRenderAll();
     }
   }
@@ -100,13 +145,10 @@ export default class FabricLight extends PureComponent {
     const readyForAction = !!canvas && !!sourceImage;
     return (
       <div style={{ position: 'relative' }}>
-        <canvas
-          id={id}
-          ref={this.canvas_element}
-          width={width}
-          height={height}
-        />
-        {readyForAction && <MenuBar canvas={canvas} image={sourceImage} />}
+        <canvas id={id} width={width} height={height} />
+        {readyForAction && (
+          <MenuBar parentComponent={this} parentState={this.state} />
+        )}
       </div>
     );
   }
@@ -124,3 +166,13 @@ FabricLight.defaultProps = {
   height: 500,
   backgroundColor: 'rgba(0, 0, 0, 0.1)'
 };
+
+export const fabricLightStateShape = PropTypes.shape({
+  canvas: PropTypes.object,
+  sourceImage: PropTypes.object,
+  transforms: PropTypes.arrayOf(PropTypes.func).isRequired,
+  redos: PropTypes.arrayOf(PropTypes.func).isRequired
+});
+
+
+export default FabricLight;

@@ -1,17 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-export default class MenuBar extends Component {
+import FabricLight, { fabricLightStateShape } from './FabricLight';
+
+import HistoryButtons from './HistoryButtons';
+
+class MenuBar extends Component {
+  static propTypes = {
+    parentComponent: PropTypes.instanceOf(FabricLight).isRequired,
+    parentState: fabricLightStateShape
+  };
+
   render() {
     return (
       <div style={{ position: 'absolute', top: '-15px' }}>
-        <button>A</button>
+        <HistoryButtons {...this.props} />
       </div>
     );
   }
+
 }
 
-MenuBar.propTypes = {
-  canvas: PropTypes.object.isRequired,
-  image: PropTypes.object.isRequired
-};
+export { MenuBar as default };

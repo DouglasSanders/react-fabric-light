@@ -1,3 +1,5 @@
+//eslint-disable-next-line
+import MenuBar from './components/MenuBar'; //must import before FabricLight 
 import FabricLight from './components/FabricLight';
 import React from 'react';
 import { render } from 'react-dom';

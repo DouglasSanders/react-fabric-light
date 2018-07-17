@@ -9,7 +9,7 @@ import PencilButton from './PencilButton';
 class MenuBar extends Component {
   static propTypes = {
     parentComponent: PropTypes.instanceOf(FabricLight).isRequired,
-    parentState: fabricLightStateShape
+    parentState: fabricLightStateShape.isRequired
   };
 
   render() {

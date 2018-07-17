@@ -1,8 +1,8 @@
 {
   "name": "react-fabric-light",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Implementation of fabric-js in React, with a minimal feature set",
-  "main": "index.js",
+  "main": "src/index.js",
   "repository": "https://github.com/DouglasSanders/react-fabric-light",
   "author": "DouglasSanders <douglas.johman.sanders@gmail.com>",
   "license": "MIT",

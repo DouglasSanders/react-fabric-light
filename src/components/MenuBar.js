@@ -14,13 +14,21 @@ class MenuBar extends Component {
 
   render() {
     return (
-      <div style={{ position: 'absolute', top: '-15px' }}>
+      <div
+        style={{
+          position: 'absolute',
+          top: '0',
+          left: '0',
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: 'white'
+        }}
+      >
         <HistoryButtons {...this.props} />
         <PencilButton {...this.props} />
       </div>
     );
   }
-
 }
 
 export { MenuBar as default };

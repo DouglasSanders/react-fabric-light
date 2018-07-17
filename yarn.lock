@@ -1906,7 +1906,7 @@ extsprintf@^1.2.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
 
-fabric@^2.3.3:
+fabric@^2.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/fabric/-/fabric-2.3.3.tgz#b82657be361c50640a708c4d53dab551f5ef5396"
   optionalDependencies:

@@ -5,10 +5,7 @@ import React from 'react';
 import { render } from 'react-dom';
 
 render(
-  <FabricLight
-    width={document.getElementById('example').clientWidth}
-    height={document.getElementById('example').clientHeight}
-  >
+  <FabricLight maxWidth={800} maxHeight={600}>
     <img src="sample.png" />
   </FabricLight>,
   document.getElementById('example')

@@ -7,9 +7,9 @@ export function computeScale(canvas, image) {
   // fit the image in the canvas
   scale = Math.min(targetScaleX, targetScaleY);
   // don't allow expanding an image beyond this
-  scale = Math.min(scale, 2);
+  // scale = Math.min(scale, 2);
   // don't allow sizing lower than this
-  scale = Math.max(scale, 0.1);
+  // scale = Math.max(scale, 0.1);
   return scale;
 }
 

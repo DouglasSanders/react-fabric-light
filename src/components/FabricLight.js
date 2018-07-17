@@ -18,6 +18,10 @@ export class FabricLight extends Component {
       id: id,
       canvas: null,
       sourceImage: null,
+      dimensions: {
+        width: props.maxWidth,
+        height: props.maxHeight
+      },
       transforms: [],
       redos: []
     };
@@ -46,7 +50,7 @@ export class FabricLight extends Component {
       o_img => {
         const { canvas } = this.state;
         canvas.add(o_img);
-        ::this.rescaleImage(canvas, o_img);
+        ::this.rescaleCanvas(canvas, o_img);
         this.setState({
           canvas: canvas,
           sourceImage: o_img
@@ -116,11 +120,11 @@ export class FabricLight extends Component {
     });
   }
 
-  rescaleImage(canvas, image) {
+  rescaleCanvas(canvas, image) {
     if (canvas && image) {
       image.scale(computeScale(canvas, image));
-      canvas.centerObject(image);
-      image.setCoords();
+      canvas.setWidth(image.width * image.scaleX);
+      canvas.setHeight(image.height * image.scaleY);
     }
   }
 
@@ -172,23 +176,21 @@ export class FabricLight extends Component {
   }
 
   render() {
-    const { width, height } = this.props;
-    const { id, canvas, sourceImage } = this.state;
+    const { id, canvas, sourceImage, dimensions } = this.state;
     const readyForAction = !!canvas && !!sourceImage;
 
     return (
-      <div style={{ position: 'relative' }}>
-        <canvas id={id} width={width} height={height} />
+      <div
+        style={{
+          position: 'relative',
+          display: 'flex',
+          justifyContent: 'center'
+        }}
+      >
+        <canvas id={id} width={dimensions.width} height={dimensions.height} />
         {readyForAction && (
           <MenuBar parentComponent={this} parentState={this.state} />
         )}
-        <button
-          onClick={() => {
-            ::this.toDataURL();
-          }}
-        >
-          URL
-        </button>
       </div>
     );
   }
@@ -196,14 +198,14 @@ export class FabricLight extends Component {
 
 FabricLight.propTypes = {
   children: PropTypes.element.isRequired,
-  width: PropTypes.number,
-  height: PropTypes.number,
+  maxWidth: PropTypes.number,
+  maxHeight: PropTypes.number,
   backgroundColor: PropTypes.string
 };
 
 FabricLight.defaultProps = {
-  width: 500,
-  height: 500,
+  maxWidth: 500,
+  maxHeight: 500,
   backgroundColor: 'rgba(0, 0, 0, 0.1)'
 };
 

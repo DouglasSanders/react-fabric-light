@@ -72,10 +72,19 @@ export class FabricLight extends Component {
    * Adds a new Transform to the stack. Wipes out any existing Redo stack.
    */
   addTransform(transformFunction) {
-    this.setState(prevState => ({
-      transforms: prevState.transforms.concat([transformFunction]),
-      redos: []
-    }));
+    if (typeof transformFunction === 'function') {
+      this.setState(prevState => {
+        return {
+          transforms: prevState.transforms.concat([transformFunction]),
+          redos: []
+        };
+      });
+    } else {
+      //eslint-disable-next-line no-console
+      console.error(
+        `addTransform must be passed a function (passed ${transformFunction}).`
+      );
+    }
   }
 
   /**
@@ -86,7 +95,7 @@ export class FabricLight extends Component {
       if (prevState.transforms.length > 0) {
         return {
           transforms: prevState.transforms.slice(0, -1),
-          redos: prevState.redos.concat([prevState.transforms.slice(-1)])
+          redos: prevState.redos.concat(prevState.transforms.slice(-1))
         };
       } else return prevState;
     });
@@ -100,7 +109,7 @@ export class FabricLight extends Component {
     this.setState(prevState => {
       if (prevState.redos.length > 0) {
         return {
-          transforms: prevState.transforms.concat([prevState.redos.slice(-1)]),
+          transforms: prevState.transforms.concat(prevState.redos.slice(-1)),
           redos: prevState.redos.slice(0, -1)
         };
       } else return prevState;
@@ -115,17 +124,15 @@ export class FabricLight extends Component {
     }
   }
 
-  renderImage(canvas, image) {
-    if (canvas && image) {
-      ::this.rescaleImage(canvas, image);
-      canvas.requestRenderAll();
-    }
+  toDataURL() {
+    return this.state.canvas.toDataURL();
   }
 
   componentDidMount() {
     FabricLight.requireValidProps(this.props);
     const { id } = this.state;
     const { children, backgroundColor } = this.props;
+
     this.setState(
       {
         canvas: new fabric.Canvas(id, {
@@ -139,16 +146,49 @@ export class FabricLight extends Component {
     );
   }
 
+  renderTransforms(state) {
+    const { canvas, sourceImage, transforms } = state;
+
+    if (!!canvas && !!sourceImage) {
+      const canvasObjects = canvas.getObjects();
+
+      while (canvasObjects.length !== 0) {
+        canvas.remove(canvasObjects[0]);
+      }
+
+      canvas.add(sourceImage);
+      transforms.forEach(t => {
+        t(canvas);
+      });
+
+      canvas.requestRenderAll();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.transforms.length !== prevState.transforms.length) {
+      ::this.renderTransforms(this.state);
+    }
+  }
+
   render() {
     const { width, height } = this.props;
     const { id, canvas, sourceImage } = this.state;
     const readyForAction = !!canvas && !!sourceImage;
+
     return (
       <div style={{ position: 'relative' }}>
         <canvas id={id} width={width} height={height} />
         {readyForAction && (
           <MenuBar parentComponent={this} parentState={this.state} />
         )}
+        <button
+          onClick={() => {
+            ::this.toDataURL();
+          }}
+        >
+          URL
+        </button>
       </div>
     );
   }
@@ -173,6 +213,5 @@ export const fabricLightStateShape = PropTypes.shape({
   transforms: PropTypes.arrayOf(PropTypes.func).isRequired,
   redos: PropTypes.arrayOf(PropTypes.func).isRequired
 });
-
 
 export default FabricLight;

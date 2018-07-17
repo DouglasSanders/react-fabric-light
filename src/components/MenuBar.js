@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import FabricLight, { fabricLightStateShape } from './FabricLight';
 
 import HistoryButtons from './HistoryButtons';
+import PencilButton from './PencilButton';
 
 class MenuBar extends Component {
   static propTypes = {
@@ -15,6 +16,7 @@ class MenuBar extends Component {
     return (
       <div style={{ position: 'absolute', top: '-15px' }}>
         <HistoryButtons {...this.props} />
+        <PencilButton {...this.props} />
       </div>
     );
   }

@@ -10,22 +10,38 @@ export class HistoryButtons extends Component {
     parentState: fabricLightStateShape
   };
 
+  handleUndo(e) {
+    e.preventDefault();
+    this.props.parentComponent.undoTransform();
+  }
+
+  handleRedo(e) {
+    e.preventDefault();
+    this.props.parentComponent.redoTransform();
+  }
+
   render() {
     const { transforms, redos } = this.props.parentState;
     const canUndo = transforms.length > 0;
     const canRedo = redos.length > 0;
 
     const undoClasses = classnames({
-      disabled: !canUndo
+      btn: true,
+      "btn-primary": canUndo,
+      "btn-secondary": !canUndo,
+      "btn-sm": true
     });
 
     const redoClasses = classnames({
-      disabled: !canRedo
+      btn: true,
+      "btn-primary": canRedo,
+      "btn-secondary": !canRedo,
+      "btn-sm": true
     });
     return (
-      <span>
-        <button className={undoClasses}>Undo</button>
-        <button className={redoClasses}>Redo</button>
+      <span className="btn-group" role="group">
+        <button className={undoClasses} disabled={!canUndo} role="button" onClick={(e) => {::this.handleUndo(e)}}>Undo</button>
+        <button className={redoClasses} disabled={!canRedo} role="button" onClick={(e) => {::this.handleRedo(e)}}>Redo</button>
       </span>
     );
   }

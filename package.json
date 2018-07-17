@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "description": "Implementation of fabric-js in React, with a minimal feature set",
   "main": "src/index.js",
+  "module": "src/index.js",
   "repository": "https://github.com/DouglasSanders/react-fabric-light",
   "author": "DouglasSanders <douglas.johman.sanders@gmail.com>",
   "license": "MIT",
@@ -11,10 +12,6 @@
     "eslint": "./node_modules/.bin/eslint '**/*.js'",
     "build": "./node_modules/.bin/webpack --colors",
     "watch": "./node_modules/.bin/webpack --colors --watch"
-  },
-  "peerDependencies": {
-    "react": "^15.x.x || ^16.x.x",
-    "react-dom": "^15.x.x || ^16.x.x"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

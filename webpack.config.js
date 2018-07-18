@@ -1,4 +1,4 @@
-var webpack = require('webpack');
+require('webpack');
 var path = require('path');
 
 function join(dest) {

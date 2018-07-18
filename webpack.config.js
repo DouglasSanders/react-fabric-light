@@ -1,4 +1,4 @@
-require('webpack');
+var webpack = require('webpack');
 var path = require('path');
 
 function join(dest) {
@@ -12,17 +12,22 @@ module.exports = function() {
     entry: join('src/index.js'),
     output: {
       path: join('build'),
-      filename: 'fabriclight.js'
+      filename: 'fabriclight.js',
+      library: 'FabricLight',
+      libraryTarget: 'umd'
     },
     module: {
       rules: [
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          loader: 'babel-loader',
+          loader: 'babel-loader'
         }
       ]
     },
-    externals: {}
+    externals: {
+      react: 'react',
+      'react-dom': 'react-dom'
+    }
   };
 };

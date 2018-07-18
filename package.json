@@ -3,33 +3,37 @@
   "version": "0.0.2",
   "description": "Implementation of fabric-js in React, with a minimal feature set",
   "main": "src/index.js",
-  "module": "src/index.js",
+  "module": "dist/index.js",
   "repository": "https://github.com/DouglasSanders/react-fabric-light",
   "author": "DouglasSanders <douglas.johman.sanders@gmail.com>",
   "license": "MIT",
   "private": false,
   "scripts": {
     "eslint": "./node_modules/.bin/eslint '**/*.js'",
-    "build": "./node_modules/.bin/webpack --colors",
+    "build": "./node_modules/.bin/babel src --out-dir dist",
     "watch": "./node_modules/.bin/webpack --colors --watch"
   },
+  "peerDependencies": {
+    "react": "^15.x.x || ^16.x.x",
+    "react-dom": "^15.x.x || ^16.x.x"
+  },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.5",
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-function-bind": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "classnames": "^2.2.6",
     "eslint": "^5.0.1",
     "eslint-plugin-babel": "^5.1.0",
     "eslint-plugin-react": "^7.10.0",
-    "fabric": "^2.3",
+    "fabric": "^2.3.3",
     "prop-types": "^15.6.2",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
     "webpack": "^4.14.0",
     "webpack-cli": "^3.0.8"
   }

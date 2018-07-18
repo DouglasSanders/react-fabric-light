@@ -25,6 +25,7 @@
     "arguments": true,
     "process": true,
     "__dirname": true,
-    "global": true
+    "global": true,
+    "requirejs": null
   }
 }
